@@ -1,0 +1,37 @@
+﻿@model List<RestaurantApp.Models.Restaurant>
+
+<h2>Restaurant List</h2>
+
+<a asp-action="Create">Add New Restaurant</a>
+
+@if (Model != null && Model.Any())
+{
+    <table border="1">
+        <tr>
+            <th>Name</th>
+            <th>Location</th>
+            <th>Cuisine</th>
+            <th>Rating</th>
+            <th>Actions</th>
+        </tr>
+
+        @foreach (var r in Model)
+        {
+            <tr>
+                <td>@r.Name</td>
+                <td>@r.Location</td>
+                <td>@r.CuisineType</td>
+                <td>@r.Rating</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@r.Id">Details</a> |
+                    <a asp-action="Edit" asp-route-id="@r.Id">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@r.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </table>
+}
+else
+{
+    <p>No restaurants available.</p>
+}
