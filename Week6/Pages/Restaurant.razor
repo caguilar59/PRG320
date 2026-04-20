@@ -1,0 +1,191 @@
+@page "/restaurants"
+@using RestaurantApp.Models
+
+<h1>Restaurant Management</h1>
+
+<button class="btn btn-primary" @onclick="ShowAddForm">Add Restaurant</button>
+
+<hr />
+
+<h3>Restaurant List</h3>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Cuisine</th>
+            <th>Location</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var restaurant in restaurants)
+        {
+            <tr>
+                <td>@restaurant.Name</td>
+                <td>@restaurant.Cuisine</td>
+                <td>@restaurant.Location</td>
+                <td>
+                    <button class="btn btn-warning btn-sm" @onclick="() => EditRestaurant(restaurant)">Edit</button>
+                    <button class="btn btn-danger btn-sm" @onclick="() => DeleteRestaurant(restaurant.Id)">Delete</button>
+                    <button class="btn btn-success btn-sm" @onclick="() => ShowReviewForm(restaurant)">Add Review</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (showForm)
+{
+    <hr />
+    <h3>@formTitle</h3>
+
+    <div class="mb-2">
+        <input class="form-control" placeholder="Name" @bind="currentRestaurant.Name" />
+    </div>
+
+    <div class="mb-2">
+        <input class="form-control" placeholder="Cuisine" @bind="currentRestaurant.Cuisine" />
+    </div>
+
+    <div class="mb-2">
+        <input class="form-control" placeholder="Location" @bind="currentRestaurant.Location" />
+    </div>
+
+    <button class="btn btn-success" @onclick="SaveRestaurant">Save</button>
+    <button class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+}
+
+@if (showReview)
+{
+    <hr />
+    <h3>Add Review for @selectedRestaurant.Name</h3>
+
+    <div class="mb-2">
+        <input class="form-control" placeholder="Reviewer Name" @bind="newReview.Reviewer" />
+    </div>
+
+    <div class="mb-2">
+        <input class="form-control" placeholder="Comment" @bind="newReview.Comment" />
+    </div>
+
+    <div class="mb-2">
+        <input class="form-control" type="number" min="1" max="5" placeholder="Rating" @bind="newReview.Rating" />
+    </div>
+
+    <button class="btn btn-success" @onclick="AddReview">Submit Review</button>
+    <button class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+}
+
+<hr />
+
+<h3>Restaurant Reviews</h3>
+
+@foreach (var restaurant in restaurants)
+{
+    <h4>@restaurant.Name</h4>
+
+    @if (restaurant.Reviews.Count == 0)
+    {
+        <p>No reviews yet.</p>
+    }
+    else
+    {
+        <ul>
+            @foreach (var review in restaurant.Reviews)
+            {
+                <li>
+                    <b>@review.Reviewer</b> -
+                    @review.Comment
+                    (Rating: @review.Rating)
+                </li>
+            }
+        </ul>
+    }
+}
+
+@code {
+
+    List<Restaurant> restaurants = new List<Restaurant>
+    {
+        new Restaurant { Id = 1, Name="Olive Garden", Cuisine="Italian", Location="Santa Ana" },
+        new Restaurant { Id = 2, Name="Sushi House", Cuisine="Japanese", Location="Irvine" },
+        new Restaurant { Id = 3, Name="Taco Spot", Cuisine="Mexican", Location="Anaheim" }
+    };
+
+    Restaurant currentRestaurant = new Restaurant();
+    Restaurant selectedRestaurant = new Restaurant();
+    Review newReview = new Review();
+
+    bool showForm = false;
+    bool showReview = false;
+    string formTitle = "";
+
+    void ShowAddForm()
+    {
+        currentRestaurant = new Restaurant();
+        formTitle = "Add Restaurant";
+        showForm = true;
+        showReview = false;
+    }
+
+    void EditRestaurant(Restaurant restaurant)
+    {
+        currentRestaurant = new Restaurant
+        {
+            Id = restaurant.Id,
+            Name = restaurant.Name,
+            Cuisine = restaurant.Cuisine,
+            Location = restaurant.Location
+        };
+
+        formTitle = "Edit Restaurant";
+        showForm = true;
+        showReview = false;
+    }
+
+    void SaveRestaurant()
+    {
+        if (currentRestaurant.Id == 0)
+        {
+            currentRestaurant.Id = restaurants.Max(r => r.Id) + 1;
+            restaurants.Add(currentRestaurant);
+        }
+        else
+        {
+            var existing = restaurants.First(r => r.Id == currentRestaurant.Id);
+            existing.Name = currentRestaurant.Name;
+            existing.Cuisine = currentRestaurant.Cuisine;
+            existing.Location = currentRestaurant.Location;
+        }
+
+        showForm = false;
+    }
+
+    void DeleteRestaurant(int id)
+    {
+        var restaurant = restaurants.First(r => r.Id == id);
+        restaurants.Remove(restaurant);
+    }
+
+    void ShowReviewForm(Restaurant restaurant)
+    {
+        selectedRestaurant = restaurant;
+        newReview = new Review();
+        showReview = true;
+        showForm = false;
+    }
+
+    void AddReview()
+    {
+        selectedRestaurant.Reviews.Add(newReview);
+        showReview = false;
+    }
+
+    void Cancel()
+    {
+        showForm = false;
+        showReview = false;
+    }
+}

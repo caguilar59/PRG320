@@ -1,0 +1,71 @@
+@model RestaurantApp.Models.Restaurant
+
+@{
+    ViewData["Title"] = "Edit Restaurant";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-7">
+
+        <div class="card shadow-lg border-0 rounded-4">
+
+            <div class="card-header bg-warning text-dark text-center py-3">
+                <h2 class="mb-0">✏️ Edit Restaurant</h2>
+            </div>
+
+            <div class="card-body p-4">
+
+                <form asp-action="Edit" method="post">
+
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label fw-semibold"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Location" class="form-label fw-semibold"></label>
+                        <input asp-for="Location" class="form-control" />
+                        <span asp-validation-for="Location" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="CuisineType" class="form-label fw-semibold">Cuisine</label>
+                        <input asp-for="CuisineType" class="form-control" />
+                        <span asp-validation-for="CuisineType" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Rating" class="form-label fw-semibold"></label>
+                        <input asp-for="Rating" type="number" class="form-control" />
+                        <span asp-validation-for="Rating" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+
+                        <a asp-action="Index" class="btn btn-secondary px-4">
+                            ← Back
+                        </a>
+
+                        <button type="submit" class="btn btn-success px-4">
+                            Save Changes
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
